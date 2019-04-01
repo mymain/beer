@@ -22,9 +22,9 @@ final class Beer
     private $name;
 
     /**
-     * @ORM\Column(type="decimal", precision=5, scale=2)
+     * @ORM\Column(type="decimal", precision=10, scale=2)
      */
-    private $price;
+    private $pricePerLiter;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Brewer", inversedBy="beers")
@@ -33,9 +33,21 @@ final class Beer
     private $brewer;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Country", inversedBy="beers")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $country;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Type", inversedBy="Beer")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $type;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $image;
 
     public function getId(): ?int
     {
@@ -54,14 +66,14 @@ final class Beer
         return $this;
     }
 
-    public function getPrice()
+    public function getPricePerLiter()
     {
-        return $this->price;
+        return $this->pricePerLiter;
     }
 
-    public function setPrice($price): self
+    public function setPricePerLiter($pricePerLiter): self
     {
-        $this->price = $price;
+        $this->pricePerLiter = $pricePerLiter;
 
         return $this;
     }
@@ -78,14 +90,38 @@ final class Beer
         return $this;
     }
 
-    public function getType(): ?string
+    public function getCountry(): ?Country
+    {
+        return $this->country;
+    }
+
+    public function setCountry(?Country $country): self
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
+    public function getType(): ?Type
     {
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(?Type $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }
