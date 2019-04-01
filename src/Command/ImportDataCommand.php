@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Importer\DataImporter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +14,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ImportDataCommand extends Command
 {
     protected static $defaultName = 'app:import';
+
+    protected $importer;
+    
+    public function __construct(DataImporter $dataImporter)
+    {
+        parent::__construct();
+        $this->dataImporter = $dataImporter;
+    }
 
     protected function configure()
     {
@@ -32,6 +41,8 @@ class ImportDataCommand extends Command
             $io->note('URL argument is required.');
             exit(1);
         }
+
+        $this->dataImporter->import($url);
 
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
     }
