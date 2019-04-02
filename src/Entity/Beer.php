@@ -131,4 +131,58 @@ class Beer
         return $this;
     }
 
+    /**
+    * @JMS\VirtualProperty
+    * @JMS\Expose()
+    */
+    public function getBrewerName()
+    {
+        return $this->brewer->getName();
+    }
+
+    /**
+    * @JMS\VirtualProperty
+    * @JMS\Expose()
+    */
+    public function getBrewerId()
+    {
+        return $this->brewer->getId();
+    }
+
+    /**
+    * @JMS\VirtualProperty
+    * @JMS\Expose()
+    */
+    public function getTypeName()
+    {
+        return $this->type->getName();
+    }
+
+    /**
+    * @JMS\VirtualProperty
+    * @JMS\Expose()
+    */
+    public function getTypeId()
+    {
+        return $this->type->getId();
+    }
+
+    /**
+    * @JMS\VirtualProperty
+    * @JMS\Expose()
+    */
+    public function getCountryName()
+    {
+        return $this->country->getName();
+    }
+
+    /**
+    * @JMS\VirtualProperty
+    * @JMS\Expose()
+    */
+    public function getCountryId()
+    {
+        return $this->country->getId();
+    }
+
 }

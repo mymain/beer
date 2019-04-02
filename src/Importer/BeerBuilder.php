@@ -31,6 +31,28 @@ class BeerBuilder implements BeerBuilderInterface
 
     public function addType(string $name) : Beer
     {
+        /*
+         * @todo try optimise (reduce flush if possible)
+         * if(!$this->entityManager->contains($type)) {
+         *      $this->entityManager->presist($type);
+         * }
+         * already added in Type Entity UniqueEntity(...) also on the field
+         * but without luck. Same for Brewer and Country
+         *
+         * Another way move creation of Country/Type/Brewer to other builiders
+         * and there iterate over all data returned from api and there
+         * something like:
+         * 
+         * $typesNames = [];
+         * foreach($data as $type) {
+         *      if(!in_array($type->name, $typesNames)) {
+         *          $typesNames[] = $type->name;
+         *          $this->entityManager->presist($type);
+         *      }
+         * }
+         * and flush here this might reduce all flush operations
+         * to only few in whole import
+         */
         $type = $this->entityManager->getRepository('App\Entity\Type')->findOneBy(['name' => $name]);
         
         if(!$type) {
