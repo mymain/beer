@@ -8,13 +8,12 @@ use App\Entity\Type;
 
 use App\Importer\BeerBuilder;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 class DataImporter
 {
-    const RESPONSE_OK = 200;
-
     private $entityManager;
     private $client;
     private $beerBuilder;
@@ -35,7 +34,7 @@ class DataImporter
             return false;
         }
 
-        if($response->getStatusCode() === self::RESPONSE_OK) {
+        if($response->getStatusCode() === Response::HTTP_OK) {
             
             $encoder = new JsonDecode;
             $data = $encoder->decode($response->getBody(), JsonEncoder::FORMAT);

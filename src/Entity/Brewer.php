@@ -11,7 +11,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass="App\Repository\BrewerRepository")
  * @UniqueEntity("name", message="Brewer name is already in use.")
  */
-final class Brewer
+class Brewer
 {
     /**
      * @ORM\Id()

@@ -3,26 +3,31 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BeerRepository")
+ * @JMS\ExclusionPolicy("all")
  */
-final class Beer
+class Beer
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @JMS\Expose()
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @JMS\Expose()
      */
     private $name;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @JMS\Expose()
      */
     private $pricePerLiter;
 
@@ -39,7 +44,7 @@ final class Beer
     private $country;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Type", inversedBy="Beer")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Type", inversedBy="beers")
      * @ORM\JoinColumn(nullable=false)
      */
     private $type;

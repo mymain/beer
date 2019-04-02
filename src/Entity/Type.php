@@ -54,6 +54,7 @@ class Type
 
     /**
      * @return Collection|Beer[]
+     * @FOS\RestBundle\Controller\Annotations\View(serializerGroups={"beer"})
      */
     public function getBeer(): Collection
     {

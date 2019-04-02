@@ -93,7 +93,7 @@ class BeerBuilder implements BeerBuilderInterface
         
         $sizeInLiters = $count * floatval($parts[5]) / 1000;//ml
         $pricePerLiter = $price / $sizeInLiters;
-        echo 'parts: ' . $parts[0] . ' ' . $parts[5] . ' ' . $sizeInLiters . ' ' . $pricePerLiter . PHP_EOL;
+        
         return $this->beer->setPricePerLiter($pricePerLiter);
     }
 
