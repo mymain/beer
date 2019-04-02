@@ -28,11 +28,11 @@ class Type
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Beer", mappedBy="type")
      */
-    private $Beer;
+    private $beers;
 
     public function __construct()
     {
-        $this->Beer = new ArrayCollection();
+        $this->beers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -54,17 +54,16 @@ class Type
 
     /**
      * @return Collection|Beer[]
-     * @FOS\RestBundle\Controller\Annotations\View(serializerGroups={"beer"})
      */
-    public function getBeer(): Collection
+    public function getBeers(): Collection
     {
-        return $this->Beer;
+        return $this->beers;
     }
 
     public function addBeer(Beer $beer): self
     {
-        if (!$this->Beer->contains($beer)) {
-            $this->Beer[] = $beer;
+        if (!$this->beers->contains($beer)) {
+            $this->beers[] = $beer;
             $beer->setType($this);
         }
 
@@ -73,8 +72,8 @@ class Type
 
     public function removeBeer(Beer $beer): self
     {
-        if ($this->Beer->contains($beer)) {
-            $this->Beer->removeElement($beer);
+        if ($this->beers->contains($beer)) {
+            $this->beers->removeElement($beer);
             // set the owning side to null (unless already changed)
             if ($beer->getType() === $this) {
                 $beer->setType(null);
