@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Rest;
 
 use App\Entity\Beer;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -15,16 +16,24 @@ class BeerController extends AbstractFOSRestController
      * Retrieves a collection of Beer resources
      * @Route("/beers", methods={"GET"})
     */
-    public function getBeers(): Response
+    public function getBeers(Request $request): Response
     {
+        $page = (int)$request->query->get('page', 1);
+        $size = (int)$request->query->get('size', 5);
         /**
          * @todo filtering and pagination
          */
         //usefull https://medium.com/@mischenkoandrey/simple-restful-pagination-with-symfony-and-angularjs-9cb003cb38f
-        $beers = $this->getDoctrine()->getRepository(Beer::class)->findAll();
+        $beers = $this->getDoctrine()->getRepository(Beer::class)->getPaginated($page, $size);
         
         // In case our GET was a success we need to return a 200 HTTP OK response with the collection of beers object
-        $view = $this->view($beers, Response::HTTP_OK);
+        $view = $this->view([
+            'beers' => $beers->getIterator(),
+            'totalElements' => $beers->count()
+        ],
+            Response::HTTP_OK
+        );
+        
 
         //without JMSSerializerBundle
         //A circular reference has been detected when serializing the object of class
