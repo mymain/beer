@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+    <head>
+        <link rel="stylesheet" href="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.css">
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-touch.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-animate.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-aria.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-route.js"></script>
+        <script src="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.core.min.js"></script>
+        <script src="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.js"></script>
+        <script src="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.selection.min.js"></script>
+        <script type="text/javascript">
+            var filtersData = {{ filtersData|json_encode|raw }};
+        </script>
+        <script src="view/app.js"></script>
+    </head>
+    <body ng-app="app">
+        <a ng-href="#!">Index</a>
+        <a ng-href="#!/brewers">Brewers</a>
+        <div ng-view></div>
+        <script ng-controller="BeersCtrl" type="text/ng-template" id="beers.html">
+            <div id="grid1" ui-grid="gridOptions" class="grid" ui-grid-pagination ui-grid-selection></div>
+        </script>
+        <script ng-controller="BrewersCtrl" type="text/ng-template" id="brewers.html">
+            <div id="grid2" ui-grid="gridOptions" class="grid" ui-grid-pagination ui-grid-selection></div>
+        </script>
+        <script ng-controller="BeerCtrl" type="text/ng-template" id="beer.html">
+            <a ng-href="#!">back</a>
+            <h1>Beer Details</h1>
+            <h2><b>Name:</b> {{ '{{beerName}}' }}</h2>
+            <h2><b>Brewer:</b> {{ '{{brewerName}}' }}</h2>
+            <h2><b>Type:</b> {{ '{{typeName}}' }}</h2>
+            <h2><b>Country:</b> {{ '{{countryName}}' }}</h2>
+            <h2><b>Price:</b> {{ '{{pricePerLiter}}' }}</h2>
+            <img src={{ '{{image}}' }}/>
+        </script>
+    </body>
+</html>

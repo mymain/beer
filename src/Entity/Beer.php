@@ -51,6 +51,7 @@ class Beer
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @JMS\Expose()
      */
     private $image;
 

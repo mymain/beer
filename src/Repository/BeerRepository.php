@@ -31,11 +31,10 @@ class BeerRepository extends ServiceEntityRepository
     *
     * @return \Doctrine\ORM\Tools\Pagination\Paginator
     */
-    public function getPaginated(int $page = 1, int $size = 5)
+    public function getAllPaginated(int $page = 1, int $size = 5)
     {
        // Create our query
        $query = $this->createQueryBuilder('p')
-           //->orderBy('p.created', 'DESC')
            ->getQuery();
 
        // No need to manually get get the result ($query->getResult())
@@ -43,6 +42,47 @@ class BeerRepository extends ServiceEntityRepository
        $paginator = $this->paginate($query, $page, $size);
 
        return $paginator;
+    }
+
+    public function findAllPaginated(int $page = 1, int $size = 5, ?int $brewerId = null, ?string $name = null, ?float $priceFrom = null, ?float $priceTo = null, ?int $countryId = null, ?int $typeId = null)
+    {
+        // Create our query
+        $query = $this->createQueryBuilder('b');
+       
+        if($brewerId) {
+            $query->andWhere('b.brewer = :brewerId');
+            $query->setParameter('brewerId', $brewerId);
+        }
+
+        if($name) {
+            $query->andWhere('b.name LIKE :name');
+            $query->setParameter('name', "%{$name}%");
+        }
+
+        if($priceFrom) {
+            $query->andWhere('b.pricePerLiter >= :priceFrom');
+            $query->setParameter('priceFrom', $priceFrom);
+        }
+
+        if($priceTo) {
+            $query->andWhere('b.pricePerLiter <= :priceTo');
+            $query->setParameter('priceTo', $priceTo);
+        }
+
+        if($countryId) {
+            $query->andWhere('b.country = :countryId');
+            $query->setParameter('countryId', $countryId);
+        }
+
+        if($typeId) {
+            $query->andWhere('b.type = :typeId');
+            $query->setParameter('typeId', $typeId);
+        }
+       
+        // No need to manually get get the result ($query->getResult())
+        $paginator = $this->paginate($query->getQuery(), $page, $size);
+
+        return $paginator;
     }
 
    /**

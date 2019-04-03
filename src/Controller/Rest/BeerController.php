@@ -20,16 +20,33 @@ class BeerController extends AbstractFOSRestController
     {
         $page = (int)$request->query->get('page', 1);
         $size = (int)$request->query->get('size', 5);
+        $brewerId = (int)$request->query->get('brewerId', null);
+        $name = $request->query->get('name', null);
+        $priceFrom = (float)$request->query->get('priceFrom', null);
+        $priceTo = (float)$request->query->get('priceTo', null);
+        $countryId = (int)$request->query->get('countryId', null);
+        $typeId = (int)$request->query->get('typeId', null);
         /**
          * @todo filtering and pagination
          */
         //usefull https://medium.com/@mischenkoandrey/simple-restful-pagination-with-symfony-and-angularjs-9cb003cb38f
-        $beers = $this->getDoctrine()->getRepository(Beer::class)->getPaginated($page, $size);
+        $beers = $this->getDoctrine()->getRepository(Beer::class)->findAllPaginated(
+            $page,
+            $size,
+            $brewerId,
+            $name,
+            $priceFrom,
+            $priceTo,
+            $countryId,
+            $typeId
+        );
         
         // In case our GET was a success we need to return a 200 HTTP OK response with the collection of beers object
         $view = $this->view([
             'beers' => $beers->getIterator(),
-            'totalElements' => $beers->count()
+            'totalElements' => $beers->count(),
+            'page' => $page,
+            'size' => $size
         ],
             Response::HTTP_OK
         );

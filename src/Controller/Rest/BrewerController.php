@@ -24,4 +24,19 @@ class BrewerController extends AbstractFOSRestController
         $view = $this->view($brewer, $brewer ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
         return $this->handleView($view);
     }
+
+    /**
+     * Retrieves a collection of Brewers resources
+     * @Route("/brewers", methods={"GET"})
+    */
+    public function getBrewers(): Response
+    {
+        /**
+         * @todo ordering by beers no
+         */
+        $brewers = $this->getDoctrine()->getRepository(Brewer::class)->findAll();
+
+        $view = $this->view(['brewers' => $brewers], Response::HTTP_OK);
+        return $this->handleView($view);
+    }
 }
