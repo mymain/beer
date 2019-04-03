@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-
 class DefaultController extends AbstractController
 {
     /**
@@ -20,12 +19,9 @@ class DefaultController extends AbstractController
      */
     public function index(): Response
     {
-        
         $filtersData = [];
-        foreach([new Brewer, new Type, new Country] as $filterClass) {
-
-            foreach($this->getDoctrine()->getRepository(get_class($filterClass))->findAll() as $row) {
-                
+        foreach ([new Brewer, new Type, new Country] as $filterClass) {
+            foreach ($this->getDoctrine()->getRepository(get_class($filterClass))->findAll() as $row) {
                 $filtersData[(new \ReflectionClass($filterClass))->getShortName()][] = [
                     'value' => $row->getId(),
                     'label' => $row->getName()

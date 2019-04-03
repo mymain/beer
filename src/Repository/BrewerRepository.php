@@ -51,5 +51,4 @@ class BrewerRepository extends ServiceEntityRepository
         $queryBuilder->groupBy('brewer');
         return $queryBuilder->getQuery()->execute();
     }
-
 }

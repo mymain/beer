@@ -42,7 +42,7 @@ class BeerBuilder implements BeerBuilderInterface
          * Another way move creation of Country/Type/Brewer to other builiders
          * and there iterate over all data returned from api and there
          * something like:
-         * 
+         *
          * $typesNames = [];
          * foreach($data as $type) {
          *      if(!in_array($type->name, $typesNames)) {
@@ -55,7 +55,7 @@ class BeerBuilder implements BeerBuilderInterface
          */
         $type = $this->entityManager->getRepository('App\Entity\Type')->findOneBy(['name' => $name]);
         
-        if(!$type) {
+        if (!$type) {
             $type = new Type;
             $type->setName($name);
             $this->entityManager->persist($type);
@@ -63,14 +63,13 @@ class BeerBuilder implements BeerBuilderInterface
         }
 
         return $this->beer->setType($type);
-
     }
 
     public function addCountry(string $name) : Beer
     {
         $country = $this->entityManager->getRepository('App\Entity\Country')->findOneBy(['name' => $name]);
 
-        if(!$country) {
+        if (!$country) {
             $country = new Country;
             $country->setName($name);
             $this->entityManager->persist($country);
@@ -84,7 +83,7 @@ class BeerBuilder implements BeerBuilderInterface
     {
         $brewer = $this->entityManager->getRepository('App\Entity\Brewer')->findOneBy(['name' => $name]);
 
-        if(!$brewer) {
+        if (!$brewer) {
             $brewer = new Brewer;
             $brewer->setName($name);
             $this->entityManager->persist($brewer);

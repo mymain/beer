@@ -27,20 +27,17 @@ class DataImporter
     
     public function import(string $url): bool
     {
-        
         try {
             $response = $this->client->request('GET', $url);
         } catch (\Exception $e) {
             return false;
         }
 
-        if($response->getStatusCode() === Response::HTTP_OK) {
-            
+        if ($response->getStatusCode() === Response::HTTP_OK) {
             $encoder = new JsonDecode;
             $data = $encoder->decode($response->getBody(), JsonEncoder::FORMAT);
             
-            foreach($data as $key => $row) {
-                
+            foreach ($data as $key => $row) {
                 $this->beerBuilder->createBeer();
                 $this->beerBuilder->addType($row->type);
                 $this->beerBuilder->addCountry($row->country);

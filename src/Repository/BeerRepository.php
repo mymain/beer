@@ -20,28 +20,28 @@ class BeerRepository extends ServiceEntityRepository
         parent::__construct($registry, Beer::class);
     }
 
-   /**
-    *
-    * 1. Create & pass query to paginate method
-    * 2. Paginate will return a `\Doctrine\ORM\Tools\Pagination\Paginator` object
-    * 3. Return that object to the controller
-    *
-    * @param integer $page The current page (passed from controller)
-    * @param integer $size Number of elements on page (passed from controller)
-    *
-    * @return \Doctrine\ORM\Tools\Pagination\Paginator
-    */
+    /**
+     *
+     * 1. Create & pass query to paginate method
+     * 2. Paginate will return a `\Doctrine\ORM\Tools\Pagination\Paginator` object
+     * 3. Return that object to the controller
+     *
+     * @param integer $page The current page (passed from controller)
+     * @param integer $size Number of elements on page (passed from controller)
+     *
+     * @return \Doctrine\ORM\Tools\Pagination\Paginator
+     */
     public function getAllPaginated(int $page = 1, int $size = 5)
     {
-       // Create our query
-       $query = $this->createQueryBuilder('p')
+        // Create our query
+        $query = $this->createQueryBuilder('p')
            ->getQuery();
 
-       // No need to manually get get the result ($query->getResult())
+        // No need to manually get get the result ($query->getResult())
 
-       $paginator = $this->paginate($query, $page, $size);
+        $paginator = $this->paginate($query, $page, $size);
 
-       return $paginator;
+        return $paginator;
     }
 
     public function findAllPaginated(
@@ -57,12 +57,12 @@ class BeerRepository extends ServiceEntityRepository
         // Create our query
         $query = $this->createQueryBuilder('b');
        
-        if($brewerId) {
+        if ($brewerId) {
             $query->andWhere('b.brewer = :brewerId');
             $query->setParameter('brewerId', $brewerId);
         }
 
-        if($name) {
+        if ($name) {
             /**
              * @todo wildcards search??
              */
@@ -70,22 +70,22 @@ class BeerRepository extends ServiceEntityRepository
             $query->setParameter('name', "%{$name}%");
         }
 
-        if($priceFrom) {
+        if ($priceFrom) {
             $query->andWhere('b.pricePerLiter >= :priceFrom');
             $query->setParameter('priceFrom', $priceFrom);
         }
 
-        if($priceTo) {
+        if ($priceTo) {
             $query->andWhere('b.pricePerLiter <= :priceTo');
             $query->setParameter('priceTo', $priceTo);
         }
 
-        if($countryId) {
+        if ($countryId) {
             $query->andWhere('b.country = :countryId');
             $query->setParameter('countryId', $countryId);
         }
 
-        if($typeId) {
+        if ($typeId) {
             $query->andWhere('b.type = :typeId');
             $query->setParameter('typeId', $typeId);
         }
@@ -96,28 +96,28 @@ class BeerRepository extends ServiceEntityRepository
         return $paginator;
     }
 
-   /**
-    * Paginator Helper
-    *
-    * Pass through a query object, current page & limit
-    * the offset is calculated from the page and limit
-    * returns an `Paginator` instance, which you can call the following on:
-    *
-    *     $paginator->getIterator()->count() # Total fetched (ie: `5` posts)
-    *     $paginator->count() # Count of ALL posts (ie: `20` posts)
-    *     $paginator->getIterator() # ArrayIterator
-    *
-    * @param Doctrine\ORM\Query $dql   DQL Query Object
-    * @param integer            $page  Current page (defaults to 1)
-    * @param integer            $limit The total number per page (defaults to 5)
-    *
-    * @return \Doctrine\ORM\Tools\Pagination\Paginator
-    */
+    /**
+     * Paginator Helper
+     *
+     * Pass through a query object, current page & limit
+     * the offset is calculated from the page and limit
+     * returns an `Paginator` instance, which you can call the following on:
+     *
+     *     $paginator->getIterator()->count() # Total fetched (ie: `5` posts)
+     *     $paginator->count() # Count of ALL posts (ie: `20` posts)
+     *     $paginator->getIterator() # ArrayIterator
+     *
+     * @param Doctrine\ORM\Query $dql   DQL Query Object
+     * @param integer            $page  Current page (defaults to 1)
+     * @param integer            $limit The total number per page (defaults to 5)
+     *
+     * @return \Doctrine\ORM\Tools\Pagination\Paginator
+     */
     public function paginate(\Doctrine\ORM\Query $dql, int $page = 1, int $limit = 5)
     {
-       $paginator = new Paginator($dql);
+        $paginator = new Paginator($dql);
 
-       $paginator->getQuery()
+        $paginator->getQuery()
            ->setFirstResult($limit * ($page - 1)) // Offset
            ->setMaxResults($limit); // Limit
 

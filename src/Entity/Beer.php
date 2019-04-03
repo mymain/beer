@@ -185,5 +185,4 @@ class Beer
     {
         return $this->country->getId();
     }
-
 }

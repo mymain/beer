@@ -42,7 +42,8 @@ class BeerController extends AbstractFOSRestController
         );
         
         // In case our GET was a success we need to return a 200 HTTP OK response with the collection of beers object
-        $view = $this->view([
+        $view = $this->view(
+            [
             'beers' => $beers->getIterator(),
             'totalElements' => $beers->count(),
             'page' => $page,
