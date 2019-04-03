@@ -44,8 +44,16 @@ class BeerRepository extends ServiceEntityRepository
        return $paginator;
     }
 
-    public function findAllPaginated(int $page = 1, int $size = 5, ?int $brewerId = null, ?string $name = null, ?float $priceFrom = null, ?float $priceTo = null, ?int $countryId = null, ?int $typeId = null)
-    {
+    public function findAllPaginated(
+        int $page = 1,
+        int $size = 5,
+        ?int $brewerId = null,
+        ?string $name = null,
+        ?float $priceFrom = null,
+        ?float $priceTo = null,
+        ?int $countryId = null,
+        ?int $typeId = null
+    ) {
         // Create our query
         $query = $this->createQueryBuilder('b');
        
@@ -55,6 +63,9 @@ class BeerRepository extends ServiceEntityRepository
         }
 
         if($name) {
+            /**
+             * @todo wildcards search??
+             */
             $query->andWhere('b.name LIKE :name');
             $query->setParameter('name', "%{$name}%");
         }

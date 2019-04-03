@@ -5,12 +5,22 @@ declare(strict_types=1);
 namespace App\Controller\Rest;
 
 use App\Entity\Brewer;
+use App\Repository\BrewerRepository;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 
 class BrewerController extends AbstractFOSRestController
 {
+
+    /* @var BrewerRepository */
+    private $brewerRepository;
+
+    public function __construct(BrewerRepository $brewerRepository)
+    {
+        $this->brewerRepository = $brewerRepository;
+    }
+
     /**
      * Retrieves a single Brewer resource
      * @param int $id
@@ -34,7 +44,7 @@ class BrewerController extends AbstractFOSRestController
         /**
          * @todo ordering by beers no
          */
-        $brewers = $this->getDoctrine()->getRepository(Brewer::class)->findAll();
+        $brewers = $this->brewerRepository->findAllOrderedByBeersNo('DESC');
 
         $view = $this->view(['brewers' => $brewers], Response::HTTP_OK);
         return $this->handleView($view);

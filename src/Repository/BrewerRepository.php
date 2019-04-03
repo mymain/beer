@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Brewer;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Brewer|null find($id, $lockMode = null, $lockVersion = null)
@@ -36,15 +36,20 @@ class BrewerRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?Brewer
+    public function findAllOrderedByBeersNo(?string $sortDirection) : array
     {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $queryBuilder = $this->createQueryBuilder('b');
+        $queryBuilder->select('COUNT(beers.id) AS HIDDEN beers_no', 'brewer');
+        $queryBuilder->from(Brewer::class, 'brewer');
+        $queryBuilder->leftJoin('brewer.beers', 'beers');
+
+        if ($sortDirection) {
+            $queryBuilder->orderBy('beers_no', $sortDirection);
+        }
+        
+        //without groupping only one row is returned
+        $queryBuilder->groupBy('brewer');
+        return $queryBuilder->getQuery()->execute();
     }
-    */
+
 }
