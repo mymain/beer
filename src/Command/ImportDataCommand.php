@@ -15,7 +15,8 @@ class ImportDataCommand extends Command
 {
     protected static $defaultName = 'app:import';
 
-    protected $importer;
+    /* @var DataImporter */
+    protected $dataImporter;
     
     public function __construct(DataImporter $dataImporter)
     {
@@ -27,23 +28,28 @@ class ImportDataCommand extends Command
     {
         $this
             ->setDescription('Import beers data from external API')
-            ->addArgument('url', InputArgument::REQUIRED, 'API URL');
+            ->addArgument('url', InputArgument::OPTIONAL, 'API URL (default http://ontariobeerapi.ca/beers)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
+        
         $url = $input->getArgument('url');
 
         if ($url) {
             $io->note(sprintf('You passed an argument: %s', $url));
         } else {
-            $io->note('URL argument is required.');
-            exit(1);
+            $url = 'http://ontariobeerapi.ca/beers';
         }
 
-        $this->dataImporter->import($url);
-
-        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
+        $this->dataImporter->setOutput($output);
+        
+        if ($this->dataImporter->import($url)) {
+            $io->success('The data import was successful!');
+        } else {
+            $io->error('Some error has occurred on the data import.');
+        }
+        
     }
 }
