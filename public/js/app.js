@@ -1,52 +1,45 @@
-//https://coderwall.com/p/0wx6ca/angularjs-table-with-paging-filter-and-sorting-backed-by-rails
-//https://github.com/eugenp/tutorials/blob/master/spring-rest-angular/src/main/webapp/view/app.js
-//https://www.baeldung.com/pagination-with-a-spring-rest-api-and-an-angularjs-table
-
 'use strict';
 
 var app = angular.module('app', ['ngRoute', 'ngTouch', 'ui.grid', 'ui.grid.pagination', 'ui.grid.selection', 'ui.grid.cellNav', 'ngAria']);
 
-
-app.config(['$routeProvider', function($routeProvider){
+app.config(function($routeProvider){
     $routeProvider.when('/', {
-        templateUrl: 'beers.html',
+        templateUrl: 'pages/beers.html',
         controller: 'BeersCtrl'
     })
-    .when('/beers', {
-        templateUrl:'beers.html',
+    .when('/beers/:brewerId', {
+        templateUrl:'pages/beers.html',
         controller:'BeersCtrl'
     })
     .when('/brewers', {
-        templateUrl:'brewers.html',
+        templateUrl:'pages/brewers.html',
         controller:'BrewersCtrl'
     })
     .when('/beer/:beerId', {
-        templateUrl:'beer.html',
+        templateUrl:'pages/beer.html',
         controller:'BeerCtrl'
     });
-}]);
+});
 
-app.controller('BeerCtrl', ['$scope', '$routeParams', '$http', function ($scope, $routeParams, $http) {
-    if($routeParams.beerId !== undefined) {
-        $http.get('/api/beers/' + $routeParams.beerId).then(function (response) {
-            var data = response.data;
-            $scope.beerName = data.name;
-            $scope.brewerName = data.brewer_name;
-            $scope.typeName = data.type_name;
-            $scope.pricePerLiter = data.price_per_liter;
-            $scope.countryName = data.country_name;
-            $scope.image = data.image;
-        });
-    }
-}]);
+app.controller('BeerCtrl', function ($scope, $http, $location, $routeParams) {
+    $http.get('/api/beers/' + $routeParams.beerId).then(function (response) {
+        var data = response.data;
+        $scope.beerName = data.name;
+        $scope.brewerName = data.brewer_name;
+        $scope.typeName = data.type_name;
+        $scope.pricePerLiter = data.price_per_liter;
+        $scope.countryName = data.country_name;
+        $scope.image = data.image;
+    });
+});
 
-app.controller('BrewersCtrl', ['$scope', '$http', '$location', 'uiGridConstants', function ($scope, $http, $location, uiGridConstants) {
+app.controller('BrewersCtrl', function ($scope, $http, $location) {
     var paginationOptions = {
         pageNumber: 1,
         pageSize: 10,
         sort: null
     };
-    
+
     $scope.gridOptions = {
         paginationPageSizes: [5, 10, 20],
         paginationPageSize: paginationOptions.pageSize,
@@ -58,49 +51,58 @@ app.controller('BrewersCtrl', ['$scope', '$http', '$location', 'uiGridConstants'
         columnDefs: [
             {name: 'name'},
             {name: 'beers_no'}
-        ]
-        
+        ],
+        onRegisterApi: function(gridApi) {
+            $scope.gridApi = gridApi;
+            gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                $location.path('/beers/' + row.entity.id);
+            });
+        }
+
     };
-    
+
     $http.get('/api/brewers').then(function(response) {
         $scope.gridOptions.data = response.data.brewers;
     });
-    
-}]);
 
-app.controller('BeersCtrl', ['$scope', '$http', '$location', 'uiGridConstants', function ($scope, $http, $location, uiGridConstants) {
+});
+
+app.controller('BeersCtrl', function ($scope, $http, $location, $routeParams, uiGridConstants) {
     var paginationOptions = {
             pageNumber: 1,
             pageSize: 10,
             sort: null
         },
-        activeFiltersConfig = {};
+        activeFiltersConfig = {
+        },
+        brewerFilterConfig = {
+            noTerm: true,
+            selectOptions: filtersData['Brewer'],
+            type: uiGridConstants.filter.SELECT
+        };
+        
         activeFiltersConfig.params = {};
-   
-   $scope.gridOptions = {
+        
+    if($routeParams.brewerId !== undefined) {
+        brewerFilterConfig['term'] = false;
+        //no need to refresh or trigger event
+        activeFiltersConfig.params['brewerId'] = brewerFilterConfig['term'] = parseInt($routeParams.brewerId);
+    }
+    
+    $scope.gridOptions = {
         paginationPageSizes: [5, 10, 20],
         paginationPageSize: paginationOptions.pageSize,
         enableColumnMenus: false,
         enableFiltering: true,
         enableSorting: false,
-	useExternalPagination: true,
+        useExternalPagination: true,
         useExternalFiltering: true,
         enableRowSelection: true,
         enableRowHeaderSelection: false,
         columnDefs: [
             {
-                /**
-                 * 103 Filtering
-                 * Programmatic setting of filters
-                 * You can set filters
-                 * http://ui-grid.info/docs/#!/tutorial/Tutorial:%20210%20Selection
-                 */
                 name: 'brewer_name', 
-                filter: {
-                    term: '',
-                    type: uiGridConstants.filter.SELECT,
-                    selectOptions: filtersData['Brewer']
-                }
+                filter: brewerFilterConfig
             },
             {name: 'name'},
             {
@@ -119,7 +121,7 @@ app.controller('BeersCtrl', ['$scope', '$http', '$location', 'uiGridConstants', 
             {
                 name: 'country_name',
                 filter: {
-                    term: '',
+                    noTerm: true,
                     type: uiGridConstants.filter.SELECT,
                     selectOptions: filtersData['Country']
                 }
@@ -127,28 +129,28 @@ app.controller('BeersCtrl', ['$scope', '$http', '$location', 'uiGridConstants', 
             {
                 name: 'type_name',
                 filter: {
-                    term: '',
+                    noTerm: true,
                     type: uiGridConstants.filter.SELECT,
                     selectOptions: filtersData['Type']
                 }
             }
         ],
         onRegisterApi: function(gridApi) {
-            
+
             $scope.gridApi = gridApi;
-            
+
             gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                 paginationOptions.pageNumber = newPage;
                 paginationOptions.pageSize = pageSize;
                 //load data from REST API
                 getPage();
             });
-            
+
             gridApi.selection.on.rowSelectionChanged($scope, function (row) {
                 //redirect to beer details view
                 $location.path('/beer/' + row.entity.id);
             });
-            
+
             gridApi.core.on.filterChanged($scope, function() {
                 var grid = this.grid;
                 /**
@@ -161,37 +163,37 @@ app.controller('BeersCtrl', ['$scope', '$http', '$location', 'uiGridConstants', 
                 } else {
                     activeFiltersConfig.params['brewerId'] = null;
                 }
-                
+
                 if(grid.columns[1].filters[0].term) {
                     activeFiltersConfig.params['name'] = grid.columns[1].filters[0].term;
                 } else {
                     activeFiltersConfig.params['name'] = null;
                 }
-                
+
                 if(grid.columns[2].filters[0].term) {
                     activeFiltersConfig.params['priceFrom'] = grid.columns[2].filters[0].term;
                 } else {
                     activeFiltersConfig.params['priceFrom'] = null;
                 }
-                
+
                 if(grid.columns[2].filters[1].term) {
                     activeFiltersConfig.params['priceTo'] = grid.columns[2].filters[1].term;
                 } else {
                     activeFiltersConfig.params['priceTo'] = null;
                 }
-                
+
                 if(grid.columns[3].filters[0].term) {
                     activeFiltersConfig.params['countryId'] = grid.columns[3].filters[0].term;
                 } else {
                     activeFiltersConfig.params['countryId'] = null;
                 }
-                
+
                 if(grid.columns[4].filters[0].term) {
                     activeFiltersConfig.params['typeId'] = grid.columns[4].filters[0].term;
                 } else {
                     activeFiltersConfig.params['typeId'] = null;
                 }
-                
+
                 //reset pagination before data load
                 paginationOptions.pageNumber = 1;
                 getPage();
@@ -208,7 +210,7 @@ app.controller('BeersCtrl', ['$scope', '$http', '$location', 'uiGridConstants', 
             $scope.gridOptions.totalItems = response.data.totalElements;
         });
     };
-    
+
     getPage();
-    
-}]);
+
+});
