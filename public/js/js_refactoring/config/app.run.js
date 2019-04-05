@@ -2,7 +2,7 @@ function AppRun(AppConstants, $rootScope) {
     'ngInject';
 
     // change page title based on state
-    $rootScope.$on('$stateChangeSuccess', (event, toState) => {
+    $rootScope.$on('$routeChangeSuccess', (event, toState) => {
         $rootScope.setPageTitle(toState.title);
     });
 

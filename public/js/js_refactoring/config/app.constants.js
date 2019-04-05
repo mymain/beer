@@ -1,5 +1,6 @@
 const AppConstants = {
-    appName: 'Beer'
+    appName: 'Beers Test App',
+    api: '/api'
 };
 
 export default AppConstants;
