@@ -18,8 +18,8 @@ class BeerController extends AbstractFOSRestController
     */
     public function getBeers(Request $request): Response
     {
-        $page = (int)$request->query->get('page', 1);
-        $size = (int)$request->query->get('size', 5);
+        $page = (int)$request->query->get('pageNumber', 1);
+        $size = (int)$request->query->get('pageSize', 5);
         $brewerId = (int)$request->query->get('brewerId', null);
         $name = $request->query->get('name', null);
         $priceFrom = (float)$request->query->get('priceFrom', null);
