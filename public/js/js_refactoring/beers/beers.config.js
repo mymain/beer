@@ -6,6 +6,11 @@ function BeersConfig($routeProvider) {
         controllerAs: 'ctrl',
         templateUrl: './js/beers/beers.html',
         title: 'Beers'
+    }).when('/beers/:brewerId', {
+        controller:'BeersCtrl',
+        controllerAs: 'ctrl',
+        templateUrl: './js/beers/beers.html',
+        title: 'Beers'
     });
 
 };

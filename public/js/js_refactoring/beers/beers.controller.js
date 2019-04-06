@@ -1,37 +1,37 @@
 class BeersCtrl {
-    constructor(AppConstants, Beer, $scope, $rootScope, $location, uiGridConstants) {
+    constructor(AppConstants, Beer, $scope, $rootScope, $location, $routeParams, uiGridConstants) {
         'ngInject';
 
         this.appName = AppConstants.appName;
         this.Beer = Beer;
-        this.$scope = $scope;
         this.uiGridConstants = uiGridConstants;
-        this.pageSize = 10;
+        this.filtersConfig = {};
+        this.$scope = $scope;
         this.$location = $location;
         
         this.paginationOptions = {
             pageSize: 10,
-            pageNumber: 1
-            
+            pageNumber: 1  
         };
+        
         this.brewerFilterConfig = {
             noTerm: true,
             selectOptions: filtersData['Brewer'],
             type: uiGridConstants.filter.SELECT
         };
+        
+        
+
+        if($routeParams.brewerId !== undefined) {
+            this.brewerFilterConfig['term'] = false;
+            //no need to refresh or trigger event
+            this.filtersConfig['brewerId'] = this.brewerFilterConfig['term'] = parseInt($routeParams.brewerId);
+        }
+        
         $rootScope.setPageTitle('Beer Test App');
         
-        // Get list of all beers
-        /*alert('ctrl');
-        Beers
-            .getAll()
-            .then(
-                (beers) => {
-                    this.beersLoaded = true;
-                    this.beers = beers;
-                }
-            );*/
         this.initGrid();
+        // Get list of all beers
         this.getPage();
     }
     initGrid() {
@@ -99,19 +99,63 @@ class BeersCtrl {
                 });
 
                 gridApi.core.on.filterChanged(self.$scope, function() {
-                    var grid = self.grid;
+                    var grid = this.grid;
+                    self.processFilters(grid);
                 });
             }
         };
     }
+    processFilters(grid) {
+       /**
+        * @todo we may want to reload dropdowns data depending 
+        * on the current available options in our search results only
+        */
+       //add filters
+       if(angular.isNumber(grid.columns[0].filters[0].term)) {
+           this.filtersConfig['brewerId'] = grid.columns[0].filters[0].term;
+       } else {
+           this.filtersConfig['brewerId'] = null;
+       }
+
+       if(grid.columns[1].filters[0].term) {
+           this.filtersConfig['name'] = grid.columns[1].filters[0].term;
+       } else {
+           this.filtersConfig['name'] = null;
+       }
+
+       if(grid.columns[2].filters[0].term) {
+           this.filtersConfig['priceFrom'] = grid.columns[2].filters[0].term;
+       } else {
+           this.filtersConfig['priceFrom'] = null;
+       }
+
+       if(grid.columns[2].filters[1].term) {
+           this.filtersConfig['priceTo'] = grid.columns[2].filters[1].term;
+       } else {
+           this.filtersConfig['priceTo'] = null;
+       }
+
+       if(grid.columns[3].filters[0].term) {
+           this.filtersConfig['countryId'] = grid.columns[3].filters[0].term;
+       } else {
+           this.filtersConfig['countryId'] = null;
+       }
+
+       if(grid.columns[4].filters[0].term) {
+           this.filtersConfig['typeId'] = grid.columns[4].filters[0].term;
+       } else {
+           this.filtersConfig['typeId'] = null;
+       }
+
+       //reset pagination before data load
+       this.paginationOptions.pageNumber = 1;
+       
+       this.getPage();
+    }
     getPage() {
-        var activeFiltersConfig = {},
-            $scope = this.$scope;
-        activeFiltersConfig.params = {};
-        activeFiltersConfig.params['page'] = this.paginationOptions.pageNumber;
-        activeFiltersConfig.params['size'] = this.paginationOptions.pageSize;
-        
-        this.Beer.getPage(this.paginationOptions.pageNumber, this.paginationOptions.pageSize).then(function(data){
+        var $scope = this.$scope,
+            params = Object.assign(this.paginationOptions, this.filtersConfig);
+        this.Beer.getPage(params).then(function(data){
             $scope.gridOptions.data = data.beers;
             $scope.gridOptions.totalItems = data.totalElements;
         });

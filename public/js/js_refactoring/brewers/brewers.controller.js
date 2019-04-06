@@ -1,17 +1,16 @@
 class BrewersCtrl {
-    constructor(Brewer, $rootScope, $scope) {
+    constructor(Brewer, $rootScope, $scope, $location) {
         'ngInject';
 
         this.Brewer = Brewer;
         $rootScope.setPageTitle('Brewer view');
         
         this.$scope = $scope;
-        this.pageSize = 10;
+        this.$location = $location;
         
         this.paginationOptions = {
             pageSize: 10,
-            pageNumber: 1
-            
+            pageNumber: 1  
         };
         
         this.initGrid();
@@ -32,6 +31,10 @@ class BrewersCtrl {
                 {name: 'beers_no'}
             ],
             onRegisterApi: function(gridApi) {
+                self.$scope.gridApi = gridApi;
+                gridApi.selection.on.rowSelectionChanged(self.$scope, function (row) {
+                    self.$location.path('/beers/' + row.entity.id);
+                });
             }
         };
     }

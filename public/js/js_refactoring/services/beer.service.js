@@ -27,15 +27,12 @@ export default class Beer {
     save(beer) {
         
     }
-    getPage(page, size) {
+    getPage(params) {
         // Create the $http object for this request
         let request = {
             url: `${this._AppConstants.api}/beers/`,
             method: 'GET',
-            params: {
-                page: page,
-                size: size
-            }
+            params: params
         };
         return this._$http(request).then(function(res){
             return res.data;
