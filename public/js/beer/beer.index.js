@@ -7,6 +7,22 @@ beerModule.config(BeerConfig);
 
 // Controllers
 import BeerCtrl from './beer.controller.js';
-beerModule.controller('BeerCtrl', BeerCtrl);
+beerModule.controller('BeerCtrl', BeerCtrl)
+.directive('beerImage', function(AppConstants) {
+    return {
+        link: function (scope, element, attrs) {
+            scope.$watch(function () {
+                return attrs.ngSrc;
+            }, function (value) {
+                if (!value) {
+                    element.attr('src', AppConstants.beerImgPlaceholder);
+                }
+            });
 
+            element.bind('error', function () {
+                element.attr('src', AppConstants.beerImgPlaceholder);
+            });
+        }
+    };
+});
 export default beerModule;
