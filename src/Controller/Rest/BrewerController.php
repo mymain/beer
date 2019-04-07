@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Rest;
 
-use App\Entity\Brewer;
 use App\Repository\BrewerRepository;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations\Route;
@@ -28,7 +27,7 @@ class BrewerController extends AbstractFOSRestController
     */
     public function getBrewer(int $id): Response
     {
-        $brewer = $this->getDoctrine()->getRepository(Brewer::class)->findOneBy(['id' => $id]);
+        $brewer = $this->brewerRepository->findOneBy(['id' => $id]);
 
         //200 HTTP OK if found else 404 NOT FOUND
         $view = $this->view($brewer, $brewer ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
@@ -41,9 +40,6 @@ class BrewerController extends AbstractFOSRestController
     */
     public function getBrewers(): Response
     {
-        /**
-         * @todo ordering by beers no
-         */
         $brewers = $this->brewerRepository->findAllOrderedByBeersNo('DESC');
 
         $view = $this->view(['brewers' => $brewers], Response::HTTP_OK);

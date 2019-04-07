@@ -50,6 +50,5 @@ class ImportDataCommand extends Command
         } else {
             $io->error('Some error has occurred on the data import.');
         }
-        
     }
 }

@@ -7,4 +7,10 @@ servicesModule.service('Beer', BeerService);
 import BrewerService from './brewer.service.js';
 servicesModule.service('Brewer', BrewerService);
 
+import TypeService from './type.service.js';
+servicesModule.service('Type', TypeService);
+
+import CountryService from './country.service.js';
+servicesModule.service('Country', CountryService);
+
 export default servicesModule;

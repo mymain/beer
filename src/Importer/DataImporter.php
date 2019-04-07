@@ -38,7 +38,7 @@ class DataImporter
     public function writeln(string $text): bool
     {
         if (!$this->output) {
-           return false;
+            return false;
         }
         
         $this->output->writeln($text, $this->output->getVerbosity());
