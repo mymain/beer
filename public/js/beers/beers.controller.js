@@ -1,38 +1,51 @@
 class BeersCtrl {
-    constructor(AppConstants, Beer, $scope, $rootScope, $location, $routeParams, uiGridConstants) {
+    constructor(AppConstants, Beer, Brewer, $scope, $rootScope, $location, $routeParams, uiGridConstants) {
         'ngInject';
 
         this.appName = AppConstants.appName;
         this.Beer = Beer;
+        this.Brewers = Brewer;
         this.uiGridConstants = uiGridConstants;
         this.filtersConfig = {};
         this.$scope = $scope;
         this.$location = $location;
+        this.brewerId = parseInt($routeParams.brewerId);
         
         this.paginationOptions = {
             pageSize: 10,
             pageNumber: 1  
         };
-        
-        this.brewerFilterConfig = {
-            noTerm: true,
-            selectOptions: filtersData['Brewer'],
-            type: uiGridConstants.filter.SELECT
-        };
-        
-        
-
-        if($routeParams.brewerId !== undefined) {
-            this.brewerFilterConfig['term'] = false;
-            //no need to refresh or trigger event
-            this.filtersConfig['brewerId'] = this.brewerFilterConfig['term'] = parseInt($routeParams.brewerId);
-        }
-        
+             
         $rootScope.setPageTitle('Beer Test App');
         
+        this.initBrewersFilter(Brewer, uiGridConstants);
+        
         this.initGrid();
+        
         // Get list of all beers
         this.getPage();
+        
+    }
+    initBrewersFilter(Brewer, uiGridConstants) {
+        this.$scope.brewersValues = [];
+        this.brewerFilterConfig = {
+            noTerm: true,
+            selectOptions: this.$scope.brewersValues,
+            type: uiGridConstants.filter.SELECT
+        };   
+
+        if(!isNaN(this.brewerId)) {
+            this.brewerFilterConfig['noTerm'] = false;
+            //no need to refresh or trigger event
+            this.filtersConfig['brewerId'] = this.brewerFilterConfig['term'] = this.brewerId;
+        }
+        //http://plnkr.co/edit/qIeXkkHPzJEClOppwrNN?p=preview
+        Brewer.getAll().then((response) => {
+            var $scope = this.$scope;
+            angular.forEach(response.brewers, function(value, key) {
+                $scope.brewersValues.push({label: value.name, value: value.id });
+            });
+        });
     }
     initGrid() {
         var self = this;
@@ -49,7 +62,7 @@ class BeersCtrl {
             columnDefs: [
                 {
                     name: 'brewer_name', 
-                    filter: this.brewerFilterConfig
+                        filter: this.brewerFilterConfig
                 },
                 {name: 'name'},
                 {
@@ -70,7 +83,7 @@ class BeersCtrl {
                     filter: {
                         noTerm: true,
                         type: this.uiGridConstants.filter.SELECT,
-                        selectOptions: filtersData['Country']
+                        selectOptions: filtersData['Country'] /* @todo REST API */
                     }
                 },
                 {
@@ -78,7 +91,7 @@ class BeersCtrl {
                     filter: {
                         noTerm: true,
                         type: this.uiGridConstants.filter.SELECT,
-                        selectOptions: filtersData['Type']
+                        selectOptions: filtersData['Type'] /* @todo REST API */
                     }
                 }
             ],
