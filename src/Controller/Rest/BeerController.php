@@ -15,17 +15,17 @@ class BeerController extends AbstractFOSRestController
     /**
      * Retrieves a collection of Beer resources
      * @Route("/beers", methods={"GET"})
-    */
+     */
     public function getBeers(Request $request): Response
     {
-        $page = (int)$request->query->get('pageNumber', 1);
-        $size = (int)$request->query->get('pageSize', 5);
-        $brewerId = (int)$request->query->get('brewerId', null);
+        $page = $request->query->getInt('pageNumber', 1);
+        $size = $request->query->getInt('pageSize', 5);
+        $brewerId = $request->query->getInt('brewerId');
         $name = $request->query->get('name', null);
-        $priceFrom = (float)$request->query->get('priceFrom', null);
-        $priceTo = (float)$request->query->get('priceTo', null);
-        $countryId = (int)$request->query->get('countryId', null);
-        $typeId = (int)$request->query->get('typeId', null);
+        $priceFrom = (float)$request->query->get('priceFrom');
+        $priceTo = (float)$request->query->get('priceTo');
+        $countryId = (int)$request->query->getInt('countryId');
+        $typeId = (int)$request->query->getInt('typeId');
         /**
          * @todo filtering and pagination
          */
@@ -42,8 +42,7 @@ class BeerController extends AbstractFOSRestController
         );
         
         // In case our GET was a success we need to return a 200 HTTP OK response with the collection of beers object
-        $view = $this->view(
-            [
+        $view = $this->view([
             'beers' => $beers->getIterator(),
             'totalElements' => $beers->count(),
             'page' => $page,
@@ -51,7 +50,6 @@ class BeerController extends AbstractFOSRestController
         ],
             Response::HTTP_OK
         );
-        
 
         //without JMSSerializerBundle
         //A circular reference has been detected when serializing the object of class
@@ -61,15 +59,14 @@ class BeerController extends AbstractFOSRestController
 
     /**
      * Retrieves a single Beer resource
-     * @param int $id
      * @Route("/beers/{id}", methods={"GET"})
-    */
+     */
     public function getBeer(int $id): Response
     {
         $beer = $this->getDoctrine()->getRepository(Beer::class)->findOneBy(['id' => $id]);
-
         //200 HTTP OK if found else 404 NOT FOUND
         $view = $this->view($beer, $beer ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
+
         return $this->handleView($view);
     }
 }

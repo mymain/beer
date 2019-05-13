@@ -30,8 +30,8 @@ class CountryController extends AbstractFOSRestController
          * @todo ordering by beers no
          */
         $countries = $this->countryRepository->findAll();
-
         $view = $this->view($countries, Response::HTTP_OK);
+
         return $this->handleView($view);
     }
 }

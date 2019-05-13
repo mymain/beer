@@ -17,6 +17,7 @@ class BeerBuilder implements BeerBuilderInterface
      * @var Entity\Beer
      */
     private $beer;
+
     private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)

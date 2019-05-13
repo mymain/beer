@@ -55,6 +55,7 @@ class DataImporter
         } catch (\Exception $e) {
             $this->writeln($e->getMessage());
             $this->writeln('Import failed.');
+
             return false;
         }
 
@@ -78,6 +79,7 @@ class DataImporter
             $this->entityManager->flush();
         } else {
             $this->writeln('Remote response code is not 200.');
+
             return false;
         }
         
