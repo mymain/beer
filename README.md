@@ -1,6 +1,9 @@
 # beer test app
 
+![console](public/img/homer.png)
+
 Simple PHP(7.2) + Symfony(4.2) app with REST API and AngularJS (1.7) frontend
+
 
 ### Standard application setup steps:
 
